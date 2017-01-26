@@ -22,7 +22,8 @@ import 'rxjs/add/operator/switchMap';
                        <label> name: </label> 
                        <input [(ngModel)]="hero.name">
                   </div>
-                     <button (click)="goBack()">Back</button>
+                  <button (click)="goBack()">Back</button>
+                  <button (click)="save()">Save</button>
                </div> 
 `,
   styleUrls: ['hero-details.component.css']
@@ -43,5 +44,9 @@ export class HeroDetailsComponent implements OnInit {
 
   goBack(): void {
     this.location.back();
+  }
+
+  save(): void {
+    this.heroService.update(this.hero).then(()=>this.goBack());
   }
 }

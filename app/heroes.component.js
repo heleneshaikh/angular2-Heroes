@@ -32,11 +32,33 @@ var HeroesComponent = (function () {
     HeroesComponent.prototype.gotoDetail = function () {
         this.router.navigate(['/detail', this.selectedHero.id]);
     };
+    HeroesComponent.prototype.addHero = function (name) {
+        var _this = this;
+        name = name.trim();
+        if (!name) {
+            return;
+        }
+        this.heroService.create(name).then(function (hero) {
+            _this.heroes.push(hero);
+            _this.selectedHero = null;
+        });
+    };
+    HeroesComponent.prototype.delete = function (hero) {
+        var _this = this;
+        this.heroService
+            .delete(hero.id)
+            .then(function () {
+            _this.heroes = _this.heroes.filter(function (h) { return h !== hero; });
+            if (_this.selectedHero === hero) {
+                _this.selectedHero = null;
+            }
+        });
+    };
     HeroesComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
             selector: 'heroes',
-            template: "\n            <ul class=\"heroes\">\n                <li *ngFor=\"let hero of heroes\" [class.selected]=\"hero === selectedHero\" (click)=\"selectHero(hero)\">\n                    <span class=\"badge\">{{hero.id}}</span> {{hero.name}}\n                </li>\n            </ul>\n            <!--<hero-details [selectedHero]=\"selectedHero\"></hero-details>-->\n            <div *ngIf=\"selectedHero\">\n                <h2>\n                  {{selectedHero.name | uppercase}} is my hero\n                </h2>\n                <button (click)=\"gotoDetail()\">View Details</button>\n            </div>",
+            template: "\n            <ul class=\"heroes\">\n                <li *ngFor=\"let hero of heroes\" [class.selected]=\"hero === selectedHero\" (click)=\"selectHero(hero)\">\n                    <span class=\"badge\">{{hero.id}}</span> {{hero.name}}\n                    <button class=\"delete\" (click)=\"delete(hero); $event.stopPropagation()\">X</button>\n                </li>\n            </ul>\n            <!--<hero-details [selectedHero]=\"selectedHero\"></hero-details>-->\n            <div *ngIf=\"selectedHero\">\n                <h2>\n                  {{selectedHero.name | uppercase}} is my hero\n                </h2>\n                <button (click)=\"gotoDetail()\">View Details</button>\n            </div>\n            <div>\n                <label>Hero name:</label><input #heroName/>\n                <button (click)=\"addHero(heroName.value); heroName.value=''\">Add</button>\n            </div>",
             styleUrls: ['heroes.component.css']
         }), 
         __metadata('design:paramtypes', [hero_service_1.HeroService, router_1.Router])
